@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"; // 🔥 เพิ่ม use
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 // 🔥 บรรทัดที่เพิ่มเข้ามา: ดึง Type จากส่วนกลางมาใช้งานแทน
-import { Player, Court } from "./types";
+import { Player, Court } from "@/types/badminton";
 
 // กำหนดประเภทข้อมูล (TypeScript) เพื่อความปลอดภัยตามสไตล์ ERP ย้ายไปไว้ที่ types.ts เพื่อ manage ง่ายขึ้น
 /*interface Player {
@@ -139,7 +139,12 @@ export default function BadmintonPage() {
     }
 
     // 🎉 ถ้าผ่านด่านตรวจสอบทั้งหมดด้านบน ข้อมูลพร้อมชัวร์ 100% ถึงจะปล่อยให้เซฟและข้ามหน้าได้
+    // 1. เจนรหัสกลุ่มใหม่ที่นี่เลย
+    const newGroupId = crypto.randomUUID();
+
+    // 2. เก็บ groupId ลงไปใน formData ด้วย
     const formData = {
+      groupId: newGroupId, // ✅ เพิ่มส่วนนี้เข้าไป
       courtRate,
       courts,
       shuttleCount,
@@ -147,11 +152,11 @@ export default function BadmintonPage() {
       players,
     };
 
-    // 2. เปลี่ยนเป็น localStorage เพื่อให้จำยาวๆ แม้ปิดเครื่อง
+    // 3. บันทึกลง localStorage
     localStorage.setItem("fairpay_badminton_data", JSON.stringify(formData));
 
-    // 3. สั่งย้ายหน้าเปลี่ยน Route ไปยังหน้าทบทวน/ค่าน้ำ
-    router.push("/badminton/review");
+    // 4. สั่งย้ายหน้าไปที่ Review ตามโครงสร้างโฟลเดอร์ใหม่ที่มี [groupId]
+    router.push(`/badminton/review/${newGroupId}`);
   };
 
   return (

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { BadmintonHistory, PlayerHistorySummary } from "../types";
+import { BadmintonHistory, PlayerHistorySummary } from "@/types/badminton";
 
 export default function BadmintonHistoryPage() {
   const [historyList, setHistoryList] = useState<BadmintonHistory[]>([]);

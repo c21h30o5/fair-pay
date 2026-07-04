@@ -1,4 +1,3 @@
-// src/app/badminton/types.ts
 
 export interface Player {
   id: string;

@@ -3,19 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-// 🔥 บรรทัดที่เพิ่มเข้ามา: ดึง Type จากส่วนกลางมาใช้งานแทน
-import { Player, Court } from "../types";
-
-/*interface Player {
-  id: string;
-  name: string;
-  hours: number;
-}
-
-interface Court {
-  id: string;
-  hours: number;
-}*/
+import { Player, Court } from "@/types/badminton"
+import { supabase } from "@/lib/supabaseClient";
 
 export default function BadmintonReviewPage() {
   const router = useRouter();
@@ -62,21 +51,41 @@ export default function BadmintonReviewPage() {
   const totalCentralCost = totalCourtCost + totalShuttleCost;
 
   // 4. ฟังก์ชันเมื่อกดถัดไปเพื่อดูบิลฉบับสมบูรณ์
-  // 🔁 แก้ไขฟังก์ชัน handleNext ในหน้า review/page.tsx ให้วิ่งมาหน้าสุดท้ายจริง
-  const handleNext = () => {
-    const finalData = {
-      players,
-      courtRate,
-      courts,
-      shuttleCount,
-      shuttlePrice,
-      drinks,
-    };
-    localStorage.setItem("fairpay_badminton_data", JSON.stringify(finalData));
+  const handleNext = async () => { // 1. เปลี่ยนเป็น async
+  // 1. เจนรหัสกลุ่ม
+  const newGroupId = crypto.randomUUID(); 
 
-    // สั่งวิ่งไปหน้า bill สรุปยอดสุดท้ายจริง
-    router.push("/badminton/bill");
+  const finalData = {
+    id: newGroupId, // เปลี่ยนชื่อจาก groupId เป็น id เพื่อให้ตรงกับตาราง Supabase
+    players,
+    courtRate,
+    courts,
+    shuttleCount,
+    shuttlePrice,
+    drinks,
   };
+
+  // 2. บันทึกลง Supabase ก่อนย้ายหน้า
+  const { error } = await supabase
+    .from('badminton_bills')
+    .insert([
+      { 
+        id: newGroupId, 
+        bill_data: finalData // เก็บข้อมูลทั้งหมดเป็น JSON ก้อนเดียว
+      }
+    ]);
+
+  if (error) {
+    alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + error.message);
+    return;
+  }
+
+  // 3. บันทึกลง localStorage (เก็บสำรองไว้เฉยๆ)
+  localStorage.setItem("fairpay_badminton_data", JSON.stringify(finalData));
+
+  // 4. สั่งวิ่งไปหน้า bill
+  router.push(`/badminton/bill/${newGroupId}`);
+};
 
   return (
     <main className="min-h-screen bg-slate-50 p-4 md:p-8 flex flex-col items-center">

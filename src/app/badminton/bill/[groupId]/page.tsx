@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Player, Court, BillRow } from '../types';
-import { BadmintonHistory } from '../types';
+import { Player, Court, BillRow } from "@/types/badminton";
+import { BadmintonHistory } from "@/types/badminton";
 
 /*interface Player {
   id: string;
