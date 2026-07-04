@@ -1,4 +1,3 @@
-
 export interface Player {
   id: string;
   name: string;
@@ -14,10 +13,30 @@ export interface BillRow {
   id: string;
   name: string;
   playedHours: number;
-  courtShare: number;   // 🏟️ สัดส่วนค่าคอร์ท (X)
-  shuttleShare: number; // 🏸 สัดส่วนค่าลูกแบด (Y)
-  personalDrink: number; // 🥤 ค่าน้ำส่วนตัว
-  totalToPay: number;    // 💵 ยอดรวมสุทธิที่ต้องจ่าย
+  courtShare: number;
+  shuttleShare: number;
+  personalDrink: number;
+  totalToPay: number;
+}
+
+export interface BadmintonBillSummary {
+  totalCourt: number;
+  totalShuttle: number;
+  totalCentral: number;
+  grandTotal: number;
+  billRows: BillRow[];
+}
+
+export interface BadmintonBillData {
+  id?: string;
+  groupId?: string;
+  courtRate: number;
+  courts: Court[];
+  shuttleCount: number;
+  shuttlePrice: number;
+  players: Player[];
+  drinks?: Record<string, number>;
+  summary?: BadmintonBillSummary;
 }
 
 export interface PlayerHistorySummary {
@@ -26,9 +45,7 @@ export interface PlayerHistorySummary {
 }
 
 export interface BadmintonHistory {
-  id: string;        // รหัสไอดีของบิล (ใช้ Timestamp)
-  date: string;      // วันที่เคลียร์บิล
-  totalCentral: number; // ยอดส่วนกลางรวมของก๊วน
-  grandTotal: number;   // ยอดรวมสุทธิทั้งบิล (รวมค่าน้ำทุกคน)
-  players: PlayerHistorySummary[]; // รายชื่อเพื่อนแบบย่อและยอดที่แต่ละคนต้องจ่าย
+  id: string;
+  created_at: string;
+  bill_data: BadmintonBillData;
 }

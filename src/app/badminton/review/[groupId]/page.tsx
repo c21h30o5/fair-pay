@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Player, Court } from "@/types/badminton"
+import { Player, Court, BadmintonBillData } from "@/types/badminton";
 import { supabase } from "@/lib/supabaseClient";
+import { calculateBadmintonBill } from "@/lib/badmintonBill";
 
 export default function BadmintonReviewPage() {
   const router = useRouter();
@@ -21,8 +22,10 @@ export default function BadmintonReviewPage() {
 
   // 1. ดึงข้อมูลจาก localStorage ตอนโหลดหน้าเว็บ
   useEffect(() => {
-    const savedData = localStorage.getItem("fairpay_badminton_data");
-    if (savedData) {
+    const loadSavedData = () => {
+      const savedData = localStorage.getItem("fairpay_badminton_data");
+      if (!savedData) return;
+
       try {
         const parsed = JSON.parse(savedData);
         setPlayers(parsed.players || []);
@@ -33,7 +36,9 @@ export default function BadmintonReviewPage() {
       } catch (error) {
         console.error("Error parsing data", error);
       }
-    }
+    };
+
+    loadSavedData();
   }, []);
 
   // 2. ฟังก์ชันอัปเดตค่าน้ำของแต่ละคน
@@ -55,7 +60,7 @@ export default function BadmintonReviewPage() {
   // 1. เจนรหัสกลุ่ม
   const newGroupId = crypto.randomUUID(); 
 
-  const finalData = {
+  const billData: BadmintonBillData = {
     id: newGroupId, // เปลี่ยนชื่อจาก groupId เป็น id เพื่อให้ตรงกับตาราง Supabase
     players,
     courtRate,
@@ -63,6 +68,11 @@ export default function BadmintonReviewPage() {
     shuttleCount,
     shuttlePrice,
     drinks,
+  };
+
+  const finalData: BadmintonBillData = {
+    ...billData,
+    summary: calculateBadmintonBill(billData),
   };
 
   // 2. บันทึกลง Supabase ก่อนย้ายหน้า

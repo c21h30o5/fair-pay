@@ -40,8 +40,10 @@ export default function BadmintonPage() {
 
   // 🔥 แก้ไข: เพิ่มระบบ Auto-load ข้อมูลเก่าจากสัปดาห์ก่อนมาใส่ฟอร์มให้อัตโนมัติ
   useEffect(() => {
-    const savedData = localStorage.getItem("fairpay_badminton_data");
-    if (savedData) {
+    const loadSavedData = () => {
+      const savedData = localStorage.getItem("fairpay_badminton_data");
+      if (!savedData) return;
+
       try {
         const parsed = JSON.parse(savedData);
         if (parsed.players) setPlayers(parsed.players);
@@ -52,7 +54,9 @@ export default function BadmintonPage() {
       } catch (error) {
         console.error("Failed to parse saved data from localStorage", error);
       }
-    }
+    };
+
+    loadSavedData();
   }, []);
 
   // --- ฟังก์ชันจัดการส่วนที่ 1: รายชื่อสมาชิก ---
