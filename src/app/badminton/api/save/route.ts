@@ -25,8 +25,7 @@ export async function POST(request: Request) {
     if (error) throw error;
 
     return NextResponse.json({ message: "Saved successfully", data });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Failed to save";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "Failed to save bill" }, { status: 500 });
   }
 }

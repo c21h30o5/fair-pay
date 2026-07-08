@@ -86,7 +86,7 @@ export default function BadmintonReviewPage() {
     ]);
 
   if (error) {
-    alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + error.message);
+    alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองอีกครั้ง");
     return;
   }
 
@@ -99,7 +99,7 @@ export default function BadmintonReviewPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 p-4 md:p-8 flex flex-col items-center">
-      <div className="w-full max-w-xl bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-sm border border-slate-100 p-6 animate-fade-in-up">
         {/* ส่วนหัว */}
         <div className="flex items-center gap-2 mb-6">
           <Link
@@ -165,7 +165,7 @@ export default function BadmintonReviewPage() {
                         parseInt(e.target.value) || 0,
                       )
                     }
-                    className="w-24 px-3 py-1.5 border rounded-lg text-right font-bold text-slate-700 focus:outline-blue-500 text-sm"
+                    className="w-full sm:w-24 px-3 py-2.5 sm:py-1.5 border rounded-lg text-right font-bold text-slate-700 focus:outline-blue-500 text-sm"
                     min="0"
                   />
                   <span className="text-xs font-medium text-slate-500">
@@ -187,7 +187,7 @@ export default function BadmintonReviewPage() {
         <button
           onClick={handleNext}
           disabled={players.length === 0}
-          className="w-full mt-8 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white py-3 rounded-xl font-bold transition shadow-md shadow-blue-200"
+          className="w-full mt-8 bg-blue-600 hover:bg-blue-700 active:scale-[0.97] disabled:bg-slate-300 text-white py-3 rounded-xl font-bold transition-all duration-150 shadow-md shadow-blue-200"
         >
           สรุปบิลเก็บเงินเพื่อน 🧾
         </button>

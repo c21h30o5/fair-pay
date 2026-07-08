@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fair Pay ⚖️
 
-## Getting Started
+แอปหารค่ากิจกรรมกีฬาตามจริง — สร้างบิล, คำนวณส่วนแบ่งตามเวลาเล่น, แชร์ให้เพื่อนใน Line
 
-First, run the development server:
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4
+- **Database & Auth:** Supabase (PostgreSQL + Auth)
+- **Payment:** PromptPay QR (client-side generation)
+
+## ฟีเจอร์
+
+- **Auth:** Sign Up / Sign In / Logout ด้วย email + password
+- **Route Protection:** ทุกหน้ายกเว้น `/login`, `/signup` ต้องล็อกอินก่อน
+- **Badminton Bill Calculator:** กรอกข้อมูลผู้เล่น, ค่าคอร์ท, ลูกแบด, ค่าน้ำ → คำนวณส่วนแบ่งตามชั่วโมงเล่น
+- **Review Page:** ทบทวนยอด + เพิ่มค่าน้ำดื่มส่วนตัว
+- **Bill Page:** แสดงใบเสร็จ + PromptPay QR สำหรับให้เพื่อนสแกนจ่าย
+- **History:** ดูประวัติบิลทั้งหมด (แยกตามผู้ใช้)
+- **Profile:** ตั้งค่าเบอร์ PromptPay
+- **Responsive:** Desktop + Mobile (Hamburger menu)
+- **Security:** Error messages แบบ generic, middleware route protection
+
+## เริ่มต้นใช้งาน
 
 ```bash
+# ติดตั้ง dependencies
+npm install
+
+# รัน development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+เปิด [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+สร้างไฟล์ `.env.local`:
 
-## Learn More
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Supabase Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### ตาราง `profiles`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```sql
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  promptpay_number TEXT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
 
-## Deploy on Vercel
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+CREATE POLICY "Users can read own profile"
+  ON profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can insert own profile"
+  ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Users can update own profile"
+  ON profiles FOR UPDATE USING (auth.uid() = id);
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy
+
+เหมาะกับ [Vercel](https://vercel.com) เพราะเป็น Next.js native:
+
+1. Push repo ไป GitHub
+2. Import project ใน Vercel
+3. ตั้งค่า Environment Variables (Supabase keys)
+4. Deploy

@@ -89,9 +89,9 @@ export default function SignUpPage() {
           type: 'success',
         });
       }
-    } catch (err: unknown) {
+    } catch {
       setMessage({
-        text: err instanceof Error ? err.message : 'Failed to register',
+        text: 'Registration failed. Please try again.',
         type: 'error',
       });
     } finally {
@@ -101,7 +101,7 @@ export default function SignUpPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-8 shadow-md">
+      <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-8 shadow-md animate-fade-in-up">
         <div className="mb-6 text-center">
           <h1 className="mb-1 text-3xl font-extrabold text-blue-600">
             Fair Pay ⚖️
@@ -228,7 +228,7 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-blue-600 py-3 font-bold text-white shadow-md shadow-blue-200 transition-all hover:bg-blue-700 disabled:bg-slate-300"
+              className="w-full rounded-xl bg-blue-600 py-3 font-bold text-white shadow-md shadow-blue-200 transition-all duration-150 hover:bg-blue-700 active:scale-[0.97] disabled:bg-slate-300"
             >
               {loading ? 'Please wait...' : 'Create Account 👤'}
             </button>

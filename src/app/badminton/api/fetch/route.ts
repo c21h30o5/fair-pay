@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const id = request.nextUrl.searchParams.get("id");
     let query = supabase
       .from("badminton_bills")
-      .select("id, created_at, bill_data")
+      .select("id, created_at, user_id, bill_data")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
@@ -28,8 +28,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
 
     return NextResponse.json({ data: id ? data?.[0] || null : data });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to fetch";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "Failed to fetch bills" }, { status: 500 });
   }
 }

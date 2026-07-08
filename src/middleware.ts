@@ -39,16 +39,13 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
-  // 1. กำหนดว่าหน้าไหนเป็นหน้าสาธารณะ (เช่น หน้าแรก `/` และหน้า `/login`)
-  const isPublicRoute = pathname === '/' || pathname.startsWith('/login') || pathname.startsWith('/signup')
+  const isPublicRoute = pathname === '/' || pathname.startsWith('/login') || pathname.startsWith('/signup') || pathname.startsWith('/auth/callback')
 
-  // 2. ถ้าผู้ใช้ไม่ได้ล็อกอิน และไม่ใช่หน้าสาธารณะ ให้ส่งกลับไปหน้าล็อกอิน
   if (!user && !isPublicRoute) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // 3. ถ้าล็อกอินอยู่แล้ว และจะพยายามเข้าหน้าล็อกอินซ้ำ ให้เด้งกลับไปหน้าแรกแทน
-  if (user && pathname.startsWith('/login')) {
+  if (user && (pathname.startsWith('/login') || pathname.startsWith('/signup'))) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 

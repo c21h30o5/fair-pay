@@ -165,7 +165,7 @@ export default function BadmintonPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 p-4 md:p-8 flex flex-col items-center">
-      <div className="w-full max-w-xl bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-sm border border-slate-100 p-6 animate-fade-in-up">
         {/* ส่วนหัวหน้าฟอร์ม */}
         <div className="flex items-center justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
           {/* ฝั่งซ้าย: ปุ่มย้อนกลับ และ ชื่อหัวข้อใหญ่ */}
@@ -217,7 +217,7 @@ export default function BadmintonPage() {
               <button
                 type="button" // ระบุว่าเป็นแค่ปุ่มธรรมดา ไม่ใช่ปุ่มส่งฟอร์มใหญ่
                 onClick={addPlayer}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition"
+                className="bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-150"
               >
                 + เพิ่มชื่อ
               </button>
@@ -274,7 +274,7 @@ export default function BadmintonPage() {
               <span>🏟️</span> ส่วนที่ 2: ข้อมูลคอร์ทและเวลา
             </h2>
 
-            <div className="mb-3 grid grid-cols-2 gap-2">
+            <div className="mb-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label className="block text-xs text-slate-500 mb-1">
                   ราคาคอร์ท / ชั่วโมง (บาท)
@@ -290,7 +290,7 @@ export default function BadmintonPage() {
                 <button
                   type="button"
                   onClick={addCourt}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg text-sm font-semibold transition"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.97] text-white py-2 rounded-lg text-sm font-semibold transition-all duration-150"
                 >
                   + เพิ่มคอร์ท
                 </button>
@@ -342,7 +342,7 @@ export default function BadmintonPage() {
             <h2 className="font-bold text-slate-700 mb-3 flex items-center gap-2">
               <span>🏸</span> ส่วนที่ 3: อุปกรณ์ส่วนกลาง (ลูกแบด)
             </h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs text-slate-500 mb-1">
                   จำนวนลูกที่ใช้ (ลูก)
@@ -377,7 +377,7 @@ export default function BadmintonPage() {
           {/* ปุ่มส่งฟอร์ม */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition shadow-md shadow-blue-200"
+            className="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white py-3 rounded-xl font-bold transition-all duration-150 shadow-md shadow-blue-200"
           >
             Confirm ⚙️
           </button>

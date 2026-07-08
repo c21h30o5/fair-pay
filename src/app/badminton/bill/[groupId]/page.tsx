@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { calculateBadmintonBill } from "@/lib/badmintonBill";
 import { BadmintonBillData, BadmintonHistory } from "@/types/badminton";
+import promptpay from "promptpay-qr";
+import QRCode from "qrcode";
 
 export default function BadmintonBillPage() {
   const params = useParams<{ groupId: string }>();
@@ -12,6 +14,8 @@ export default function BadmintonBillPage() {
   const [billData, setBillData] = useState<BadmintonBillData | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [promptpayNumber, setPromptpayNumber] = useState("");
+  const [qrDataUrl, setQrDataUrl] = useState("");
 
   useEffect(() => {
     const loadBill = async () => {
@@ -50,7 +54,29 @@ export default function BadmintonBillPage() {
       }
     };
 
+    const loadProfile = async () => {
+      try {
+        const response = await fetch("/profile/api");
+        const result = await response.json();
+
+        if (response.ok && result.promptpay_number) {
+          setPromptpayNumber(result.promptpay_number);
+
+          const payload = promptpay(result.promptpay_number, {});
+          const dataUrl = await QRCode.toDataURL(payload, {
+            margin: 2,
+            width: 300,
+            color: { dark: "#1e293b", light: "#ffffff" },
+          });
+          setQrDataUrl(dataUrl);
+        }
+      } catch {
+        // silently ignore — profile may not exist
+      }
+    };
+
     loadBill();
+    loadProfile();
   }, [groupId]);
 
   const summary = billData
@@ -60,12 +86,16 @@ export default function BadmintonBillPage() {
   const copyToClipboard = () => {
     if (!summary) return;
 
+    const promptpayText = promptpayNumber
+      ? `PromptPay: ${promptpayNumber}`
+      : "โอนที่: [ใส่เลขบัญชีของคุณ]";
+
     const message = `สรุปบิลแบดมินตัน
 ยอดรวมทั้งก๊วน: ${summary.grandTotal} บาท
 ------------------
 ${summary.billRows.map((row) => `${row.name}: ${row.totalToPay} บาท`).join("\n")}
 ------------------
-โอนที่: [ใส่เลขบัญชีของคุณ]`;
+${promptpayText}`;
 
     navigator.clipboard.writeText(message);
     alert("คัดลอกลงคลิปบอร์ดเรียบร้อยแล้ว");
@@ -96,7 +126,7 @@ ${summary.billRows.map((row) => `${row.name}: ${row.totalToPay} บาท`).join
 
   return (
     <main className="min-h-screen bg-slate-50 p-4 md:p-8 flex flex-col items-center">
-      <div className="w-full max-w-xl bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-sm border border-slate-100 p-6 animate-fade-in-up">
         <div className="flex items-center gap-2 mb-6">
           <Link href="/badminton/history" className="text-slate-400 hover:text-slate-600">
             ย้อนกลับ
@@ -157,10 +187,31 @@ ${summary.billRows.map((row) => `${row.name}: ${row.totalToPay} บาท`).join
           </div>
         </div>
 
+        {qrDataUrl && (
+          <div className="mt-8 bg-slate-50 rounded-xl border border-slate-200 p-5">
+            <h2 className="font-bold text-slate-700 text-sm mb-3 flex items-center gap-2">
+              <span>💳</span> ชำระเงินผ่าน PromptPay
+            </h2>
+            <div className="flex flex-col items-center gap-3">
+              <img
+                src={qrDataUrl}
+                alt="PromptPay QR"
+                className="w-full max-w-[240px] h-auto rounded-lg shadow-sm"
+              />
+              <p className="text-sm text-slate-500 font-mono tracking-wide">
+                PromptPay: {promptpayNumber}
+              </p>
+              <p className="text-xs text-slate-400 text-center">
+                เพื่อนสแกน QR เพื่อโอนเงินตามยอดที่ต้องจ่าย
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="mt-8 space-y-3">
           <button
             onClick={copyToClipboard}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold transition shadow-md shadow-emerald-200"
+            className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.97] text-white py-3.5 rounded-xl font-bold transition-all duration-150 shadow-md shadow-emerald-200"
           >
             คัดลอกบิลไปวางในกลุ่ม Line
           </button>

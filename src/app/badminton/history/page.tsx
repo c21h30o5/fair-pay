@@ -38,17 +38,14 @@ export default function BadmintonHistoryPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 p-4 md:p-8 flex flex-col items-center">
-      <div className="w-full max-w-xl">
-        <div className="flex items-center gap-4 mb-6">
-          <Link href="/badminton" className="text-slate-500 hover:text-slate-800">
-            กลับหน้าแรก
-          </Link>
-          <h1 className="text-2xl font-bold text-slate-800">ประวัติบิลแบดมินตัน</h1>
-        </div>
+      <div className="w-full max-w-xl animate-fade-in-up">
+        <h1 className="text-2xl font-bold text-slate-800 mb-6">ประวัติบิลแบดมินตัน</h1>
 
         {loading ? (
-          <div className="text-center py-10 text-slate-400">
-            กำลังโหลดข้อมูล...
+          <div className="space-y-4" role="status" aria-label="Loading">
+            <div className="h-24 w-full animate-pulse rounded-xl bg-slate-200" />
+            <div className="h-24 w-full animate-pulse rounded-xl bg-slate-200" />
+            <div className="h-24 w-full animate-pulse rounded-xl bg-slate-200" />
           </div>
         ) : errorMessage ? (
           <div className="text-center py-10 text-red-500 bg-white rounded-xl shadow-sm border">
@@ -70,7 +67,7 @@ export default function BadmintonHistoryPage() {
               return (
                 <div
                   key={item.id}
-                  className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:border-emerald-300 transition"
+                  className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:border-emerald-300 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
                 >
                   <div className="flex justify-between items-start gap-4 mb-3">
                     <div>
@@ -87,7 +84,7 @@ export default function BadmintonHistoryPage() {
                     </div>
                     <Link
                       href={`/badminton/bill/${item.id}`}
-                      className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition whitespace-nowrap"
+                      className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 active:scale-[0.97] transition-all duration-150 whitespace-nowrap"
                     >
                       ดูบิล
                     </Link>
