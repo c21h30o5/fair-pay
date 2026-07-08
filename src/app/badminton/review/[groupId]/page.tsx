@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Player, Court, BadmintonBillData } from "@/types/badminton";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 import { calculateBadmintonBill } from "@/lib/badmintonBill";
 
 export default function BadmintonReviewPage() {
@@ -76,7 +76,7 @@ export default function BadmintonReviewPage() {
   };
 
   // 2. บันทึกลง Supabase ก่อนย้ายหน้า
-  const { error } = await supabase
+  const { error } = await createClient()
     .from('badminton_bills')
     .insert([
       { 
