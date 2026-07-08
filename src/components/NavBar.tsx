@@ -16,13 +16,11 @@ export default function NavBar() {
   const supabase = createClient();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
   }, [supabase]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = '/login';
-  };
 
   return (
     <>
@@ -43,20 +41,12 @@ export default function NavBar() {
               </Link>
             ))}
             {user ? (
-              <>
-                <Link
-                  href="/profile"
-                  className="ml-2 rounded-lg bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-100"
-                >
-                  Profile
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-rose-600"
-                >
-                  Logout
-                </button>
-              </>
+              <Link
+                href="/profile"
+                className="ml-2 rounded-lg bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-100"
+              >
+                Profile
+              </Link>
             ) : (
               <Link
                 href="/login"
@@ -118,24 +108,13 @@ export default function NavBar() {
 
             <div className="border-t border-slate-100 p-4 space-y-2">
               {user ? (
-                <>
-                  <Link
-                    href="/profile"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
-                  >
-                    👤 Profile
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="flex items-center gap-3 w-full rounded-xl px-4 py-3 text-sm font-medium text-rose-600 transition hover:bg-rose-50"
-                  >
-                    🔓 Logout
-                  </button>
-                </>
+                <Link
+                  href="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+                >
+                  👤 Profile
+                </Link>
               ) : (
                 <>
                   <Link
